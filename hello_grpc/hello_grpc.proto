@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+// The Go import path is locally specified in a .proto file 
+// by declaring a go_package option with the full import path of the Go package.
+
+// 패키지명
+package protos;
+// 위의 패키지명과 일치해야 함
+option go_package = "github.com/rgb234/grpc/protos";
+
+service MyService {
+    rpc MyFunction(MyNumber) returns (MyNumber) {}
+}
+
+message MyNumber {
+    int32 value = 1;
+}
