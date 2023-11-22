@@ -6,7 +6,7 @@ syntax = "proto3";
 // 패키지명
 package protos;
 // 위의 패키지명과 일치해야 함
-option go_package = "github.com/rgb234/grpc/protos";
+option go_package = "github.com/rgb234/gRPC-with-GO/protos";
 
 service MyService {
     rpc MyFunction(MyNumber) returns (MyNumber) {}

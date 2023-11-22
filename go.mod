@@ -1,4 +1,4 @@
-module github.com/rgb234/grpc
+module github.com/rgb234/gRPC-with-GO
 
 go 1.21.4
 

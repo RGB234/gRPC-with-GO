@@ -7,8 +7,8 @@ import (
 	"log"
 	"net"
 
-	hello_grpc "github.com/rgb234/grpc"
-	pb "github.com/rgb234/grpc/pbs"
+	hello_grpc "github.com/rgb234/gRPC-with-GO/hello_grpc"
+	pb "github.com/rgb234/gRPC-with-GO/hello_grpc/pbs"
 	"google.golang.org/grpc"
 )
 

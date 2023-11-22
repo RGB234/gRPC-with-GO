@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	pb "github.com/rgb234/grpc/pbs"
+	pb "github.com/rgb234/gRPC-with-GO/hello_grpc/pbs"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -16,7 +16,7 @@ const (
 )
 
 var (
-	addr = flag.String("addr", "localhost:50051", "the address to connect to")
+	addr =  flag.String("addr", "localhost:50051", "the address to connect to")
 )
 
 func main() {
