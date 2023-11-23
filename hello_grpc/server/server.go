@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"runtime"
 
 	hello_grpc "github.com/rgb234/gRPC-with-GO/hello_grpc"
 	pb "github.com/rgb234/gRPC-with-GO/hello_grpc/pbs"
@@ -28,6 +29,11 @@ func (s *server) MyFunction(ctx context.Context, in *pb.MyNumber) (*pb.MyNumber,
 }
 
 func main(){
+	// GOMAXPROCS sets the maximum number of CPUs that can be executing simultaneously and returns the previous setting.
+	// https://pkg.go.dev/runtime#GOMAXPROCS
+	runtime.GOMAXPROCS(4)
+	// pprof.Profile()
+	
 	// cmd 명령어 파싱
 	flag.Parse()
 	// Specify the port we want to use to listen for client requests using
@@ -43,7 +49,7 @@ func main(){
 	
 	// Gorountines : ref. https://go.dev/tour/concurrency/1 
 	// lightweight thread managed by the Go runtime
-	// server (struct) 에 등록된 각 grpcServer 객체마다 각각 gorountine 을 가짐 -> 알아서 멀티스레딩
+	// server (struct) 에 등록된 각 grpcServer 객체마다 각각 gorountine 을 가짐
 	grpcServer := grpc.NewServer()
 	pb.RegisterMyServiceServer(grpcServer, &server{})
 	log.Printf("server listening at %v", lis.Addr())
