@@ -20,7 +20,7 @@ type server struct{
 	pb.UnimplementedBidirectionalServer
 }
 
-func (s *server) GetServerResponse(stream pb.Bidirectional_GetServerResponseServer) error {
+func (s *server) ProcessIoStream(stream pb.Bidirectional_ProcessIoStreamServer) error {
 	fmt.Printf("Server processing gRPC bidirectional streaming.\n")
 	// 종료 조건까지 무한루프
 	for {

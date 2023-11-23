@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BidirectionalClient interface {
 	// A Bidirectional streaming RPC.
-	GetServerResponse(ctx context.Context, opts ...grpc.CallOption) (Bidirectional_GetServerResponseClient, error)
+	ProcessIoStream(ctx context.Context, opts ...grpc.CallOption) (Bidirectional_ProcessIoStreamClient, error)
 }
 
 type bidirectionalClient struct {
@@ -34,30 +34,30 @@ func NewBidirectionalClient(cc grpc.ClientConnInterface) BidirectionalClient {
 	return &bidirectionalClient{cc}
 }
 
-func (c *bidirectionalClient) GetServerResponse(ctx context.Context, opts ...grpc.CallOption) (Bidirectional_GetServerResponseClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Bidirectional_ServiceDesc.Streams[0], "/bidirectional.Bidirectional/GetServerResponse", opts...)
+func (c *bidirectionalClient) ProcessIoStream(ctx context.Context, opts ...grpc.CallOption) (Bidirectional_ProcessIoStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Bidirectional_ServiceDesc.Streams[0], "/bidirectional.Bidirectional/ProcessIoStream", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &bidirectionalGetServerResponseClient{stream}
+	x := &bidirectionalProcessIoStreamClient{stream}
 	return x, nil
 }
 
-type Bidirectional_GetServerResponseClient interface {
+type Bidirectional_ProcessIoStreamClient interface {
 	Send(*Message) error
 	Recv() (*Message, error)
 	grpc.ClientStream
 }
 
-type bidirectionalGetServerResponseClient struct {
+type bidirectionalProcessIoStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *bidirectionalGetServerResponseClient) Send(m *Message) error {
+func (x *bidirectionalProcessIoStreamClient) Send(m *Message) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *bidirectionalGetServerResponseClient) Recv() (*Message, error) {
+func (x *bidirectionalProcessIoStreamClient) Recv() (*Message, error) {
 	m := new(Message)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -70,7 +70,7 @@ func (x *bidirectionalGetServerResponseClient) Recv() (*Message, error) {
 // for forward compatibility
 type BidirectionalServer interface {
 	// A Bidirectional streaming RPC.
-	GetServerResponse(Bidirectional_GetServerResponseServer) error
+	ProcessIoStream(Bidirectional_ProcessIoStreamServer) error
 	mustEmbedUnimplementedBidirectionalServer()
 }
 
@@ -78,8 +78,8 @@ type BidirectionalServer interface {
 type UnimplementedBidirectionalServer struct {
 }
 
-func (UnimplementedBidirectionalServer) GetServerResponse(Bidirectional_GetServerResponseServer) error {
-	return status.Errorf(codes.Unimplemented, "method GetServerResponse not implemented")
+func (UnimplementedBidirectionalServer) ProcessIoStream(Bidirectional_ProcessIoStreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method ProcessIoStream not implemented")
 }
 func (UnimplementedBidirectionalServer) mustEmbedUnimplementedBidirectionalServer() {}
 
@@ -94,25 +94,25 @@ func RegisterBidirectionalServer(s grpc.ServiceRegistrar, srv BidirectionalServe
 	s.RegisterService(&Bidirectional_ServiceDesc, srv)
 }
 
-func _Bidirectional_GetServerResponse_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(BidirectionalServer).GetServerResponse(&bidirectionalGetServerResponseServer{stream})
+func _Bidirectional_ProcessIoStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(BidirectionalServer).ProcessIoStream(&bidirectionalProcessIoStreamServer{stream})
 }
 
-type Bidirectional_GetServerResponseServer interface {
+type Bidirectional_ProcessIoStreamServer interface {
 	Send(*Message) error
 	Recv() (*Message, error)
 	grpc.ServerStream
 }
 
-type bidirectionalGetServerResponseServer struct {
+type bidirectionalProcessIoStreamServer struct {
 	grpc.ServerStream
 }
 
-func (x *bidirectionalGetServerResponseServer) Send(m *Message) error {
+func (x *bidirectionalProcessIoStreamServer) Send(m *Message) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *bidirectionalGetServerResponseServer) Recv() (*Message, error) {
+func (x *bidirectionalProcessIoStreamServer) Recv() (*Message, error) {
 	m := new(Message)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -129,8 +129,8 @@ var Bidirectional_ServiceDesc = grpc.ServiceDesc{
 	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "GetServerResponse",
-			Handler:       _Bidirectional_GetServerResponse_Handler,
+			StreamName:    "ProcessIoStream",
+			Handler:       _Bidirectional_ProcessIoStream_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},

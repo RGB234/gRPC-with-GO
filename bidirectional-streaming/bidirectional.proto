@@ -6,7 +6,7 @@ option go_package = "github.com/rgb234/gRPC-with-GO/bidirectional";
 
 service Bidirectional {
   // A Bidirectional streaming RPC.
-   rpc GetServerResponse(stream Message) returns (stream Message) {}
+   rpc ProcessIoStream(stream Message) returns (stream Message) {}
 }
 
 message Message {

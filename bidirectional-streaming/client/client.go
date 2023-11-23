@@ -66,7 +66,7 @@ func message_handler(client pb.BidirectionalClient, messageChan chan *pb.Message
 	defer cancel()
 
 	waitc := make(chan struct{})
-	stream, err := client.GetServerResponse(ctx)
+	stream, err := client.ProcessIoStream(ctx)
 	if err != nil {
 		log.Fatalf("failed to creating a stream: %v", err)
 	}
