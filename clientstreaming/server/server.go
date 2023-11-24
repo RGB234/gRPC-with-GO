@@ -27,9 +27,10 @@ func (s *server) ProcessIO(stream pb.ClientStreaming_ProcessIOServer) error {
 	for {
 		// Receive messages from client
 		msg, err := stream.Recv() 
+		count += 1
 		if err == io.EOF { 
 			// no more messages
-			count += 1
+			count -= 1
 			return stream.SendAndClose(&pb.Number{Value: count})
 		  }
 		if err != nil {
