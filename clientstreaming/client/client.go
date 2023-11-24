@@ -19,7 +19,7 @@ import (
 	"log"
 	"time"
 
-	pb "github.com/rgb234/gRPC-with-GO/bidirectional-streaming/pbs"
+	pb "github.com/rgb234/gRPC-with-GO/clientstreaming/pbs"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -60,33 +60,15 @@ func generate_messages() chan *pb.Message {
 	return messageChan
 }
 
-func message_handler(client pb.BidirectionalClient, messageChan chan *pb.Message){
+func message_handler(client pb.ClientStreamingClient, messageChan chan *pb.Message){
 	// 서버로부터 메시지 수신 & 서버로 메시지 전송
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	waitc := make(chan struct{})
-	stream, err := client.ProcessIoStream(ctx)
+	stream, err := client.ProcessIO(ctx)
 	if err != nil {
 		log.Fatalf("failed to creating a stream: %v", err)
 	}
-	//server to client
-	go func(){
-		 // 종료조건까지 무한 반복
-		for {
-			 // Receive from server
-			msg, err := stream.Recv()
-			if err == io.EOF {
-				// read done
-				close(waitc)
-				return
-			}
-			if err != nil {
-				log.Fatalf("failed to receive a message from the server: %v", err)
-			}
-			fmt.Printf("[received from server] %s\n", msg)
-		}
-	}()
 	// send to server
 	for msg := range messageChan {
 		fmt.Printf("[send to server] %s \n", msg)
@@ -99,10 +81,12 @@ func message_handler(client pb.BidirectionalClient, messageChan chan *pb.Message
 			log.Fatalf("failed to send a message to the server: %v", err)
 		}
 	}
-	stream.CloseSend()
-	// waitc 채널이 닫히지 않는 이상 waitc 채널의 값을 수신하기 위해 계속대기 (blocking)
-	// 수신이 모두 완료될 경우 (err == io.EOF) 채널이 닫히면서 대기종료 
-	<-waitc
+	// received from server
+	num, err := stream.CloseAndRecv()
+	if err != nil {
+		log.Fatalf("failed to receive a message from the server: %v", err)
+	}
+	fmt.Printf("[received from server] %s\n", num)
 }
 
 func main(){
@@ -111,6 +95,6 @@ func main(){
 		log.Fatalf("failed to dial: %v", err)
 	}
 	defer conn.Close()
-	client := pb.NewBidirectionalClient(conn)
+	client := pb.NewClientStreamingClient(conn)
 	message_handler(client, generate_messages())
 }
