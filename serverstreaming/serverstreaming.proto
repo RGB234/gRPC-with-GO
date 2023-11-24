@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package ServerStreaming;
+option go_package = "github.com/rgb234/gRPC-with-GO/ServerStreaming";
+
+service ServerStreaming {
+  // A server streaming RPC.
+   rpc ProcessIO(Number) returns (stream Message) {}
+}
+
+message Message {
+  string message = 1;
+}
+
+message Number {
+  int32 value = 1;
+}
