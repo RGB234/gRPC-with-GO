@@ -20,6 +20,7 @@ func recv_message(client pb.ServerStreamingClient) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
+	// send to server
 	request := pb.Number{Value: 5}
 	stream, err := client.ProcessIO(ctx, &request)
 	if err != nil {

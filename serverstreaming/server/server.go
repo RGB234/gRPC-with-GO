@@ -6,6 +6,8 @@ import (
 	"io"
 	"log"
 	"net"
+	"runtime"
+	"time"
 
 	pb "github.com/rgb234/gRPC-with-GO/serverstreaming/pbs"
 	"google.golang.org/grpc"
@@ -30,15 +32,22 @@ func (s *server) ProcessIO(number *pb.Number, stream pb.ServerStreaming_ProcessI
 	fmt.Printf("Server processing gRPC bidirectional streaming. {%d}\n", num)
 	
 	// send messages to client
-	messages := []*pb.Message  {
-		make_message("message #1"),
-		make_message("message #2"),
-		make_message("message #3"),
-		make_message("message #4"),
-		make_message("message #5"),
+	messages := []*pb.Message{}
+	for i := 0; i < 10; i++{
+		messages = append(messages, make_message(fmt.Sprintf("message #%d", i) ))
 	}
+
+	// messages := []*pb.Message  {
+	// 	make_message("message #1"),
+	// 	make_message("message #2"),
+	// 	make_message("message #3"),
+	// 	make_message("message #4"),
+	// 	make_message("message #5"),
+	// }
 	for _, msg :=  range(messages) {
 		err := stream.Send(&pb.Message{Message: msg.GetMessage()})
+		// 1초 지연 , 여러 클라이언트를 동시 지원가능한지 확인
+		time.Sleep(1 * time.Second)
 		if err == io.EOF {
 			return nil
 		}
@@ -52,6 +61,10 @@ func (s *server) ProcessIO(number *pb.Number, stream pb.ServerStreaming_ProcessI
 }
 
 func main() {
+	numCPU := runtime.NumCPU()
+	runtime.GOMAXPROCS(numCPU)
+	fmt.Printf("current cpu max num : %d \n", numCPU)
+
 	flag.Parse()
 	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", *port))
 	if err != nil {

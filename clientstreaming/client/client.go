@@ -34,13 +34,17 @@ func make_message(message string) *pb.Message {
 }
 
 func generate_messages() chan *pb.Message {
-	messages := []string{
-		"message #1",
-		"message #2",
-		"message #3",
-		"message #4",
-		"message #5",
+	messages := []string{}
+	for i := 0; i < 10; i++{
+		messages = append(messages, fmt.Sprintf("message {%d}", i))
 	}
+	// messages := []string{
+	// 	"message #1",
+	// 	"message #2",
+	// 	"message #3",
+	// 	"message #4",
+	// 	"message #5",
+	// }
 	// buffered channel, buffer size : len(messages)
 	messageChan := make(chan *pb.Message, len(messages))
 

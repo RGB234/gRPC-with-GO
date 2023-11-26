@@ -6,6 +6,8 @@ import (
 	"io"
 	"log"
 	"net"
+	"runtime"
+	"time"
 
 	pb "github.com/rgb234/gRPC-with-GO/bidirectional-streaming/pbs"
 	"google.golang.org/grpc"
@@ -36,6 +38,9 @@ func (s *server) ProcessIoStream(stream pb.Bidirectional_ProcessIoStreamServer) 
 		}
 		log.Printf("[received from client] %s", msg)
 
+		// processing delay
+		time.Sleep(1 * time.Second)
+
 		// send messages to client
 		err = stream.Send(&pb.Message{Message: msg.GetMessage()})
 		if err == io.EOF {
@@ -45,11 +50,15 @@ func (s *server) ProcessIoStream(stream pb.Bidirectional_ProcessIoStreamServer) 
 			log.Fatalf("failed to Send: %v", err)
 			return err
 		}
-		log.Printf("[send to client (echo)] %s", msg)
+		log.Printf("[send to client] %s", msg)
 	}
 }
 
 func main() {
+	numCPU := runtime.NumCPU()
+	runtime.GOMAXPROCS(numCPU)
+	fmt.Printf("current cpu max num : %d \n", numCPU)
+	
 	flag.Parse()
 	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", *port))
 	if err != nil {

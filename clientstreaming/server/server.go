@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net"
+	"runtime"
 
 	pb "github.com/rgb234/gRPC-with-GO/clientstreaming/pbs"
 	"google.golang.org/grpc"
@@ -42,6 +43,10 @@ func (s *server) ProcessIO(stream pb.ClientStreaming_ProcessIOServer) error {
 }
 
 func main() {
+	numCPU := runtime.NumCPU()
+	runtime.GOMAXPROCS(numCPU)
+	fmt.Printf("current cpu max num : %d \n", numCPU)
+	
 	flag.Parse()
 	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", *port))
 	if err != nil {

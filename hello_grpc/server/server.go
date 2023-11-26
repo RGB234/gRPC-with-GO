@@ -31,7 +31,9 @@ func (s *server) MyFunction(ctx context.Context, in *pb.MyNumber) (*pb.MyNumber,
 func main(){
 	// GOMAXPROCS sets the maximum number of CPUs that can be executing simultaneously and returns the previous setting.
 	// https://pkg.go.dev/runtime#GOMAXPROCS
-	runtime.GOMAXPROCS(4)
+	numCPU := runtime.NumCPU()
+	runtime.GOMAXPROCS(numCPU)
+	fmt.Printf("current cpu max num : %d \n", numCPU)
 	// pprof.Profile()
 	
 	// cmd 명령어 파싱
