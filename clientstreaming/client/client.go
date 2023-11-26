@@ -35,7 +35,7 @@ func make_message(message string) *pb.Message {
 
 func generate_messages() chan *pb.Message {
 	messages := []string{}
-	for i := 0; i < 10; i++{
+	for i := 0; i < 5; i++{
 		messages = append(messages, fmt.Sprintf("message {%d}", i))
 	}
 	// messages := []string{
@@ -77,6 +77,8 @@ func message_handler(client pb.ClientStreamingClient, messageChan chan *pb.Messa
 	for msg := range messageChan {
 		fmt.Printf("[send to server] %s \n", msg)
 		err := stream.Send(&pb.Message{Message: msg.GetMessage()}) // send messages to server
+		// delay
+		time.Sleep(1 * time.Second)
 		if err == io.EOF {
 			// send done
 			return

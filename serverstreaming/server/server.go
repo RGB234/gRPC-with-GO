@@ -33,7 +33,7 @@ func (s *server) ProcessIO(number *pb.Number, stream pb.ServerStreaming_ProcessI
 	
 	// send messages to client
 	messages := []*pb.Message{}
-	for i := 0; i < 10; i++{
+	for i := 0; i < 5; i++{
 		messages = append(messages, make_message(fmt.Sprintf("message #%d", i) ))
 	}
 
